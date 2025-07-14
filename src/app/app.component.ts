@@ -13,6 +13,7 @@ export class AppComponent implements OnInit, OnDestroy {
   fixedTooltipVisible = false;
   fixedTooltipStyle = { top: '0px', left: '0px' };
   tooltipTimeout: any;
+  isMouseOverTooltip = false;
 
   // points = Array.from({ length: 10 }, (_, i) => ({
   //   x: Math.floor(Math.random() * 100),
@@ -81,7 +82,7 @@ export class AppComponent implements OnInit, OnDestroy {
         "name": "Point 10",
         "url": "https://angular.io"
     }
-]
+  ]
 
   constructor(private renderer: Renderer2) {}
 
@@ -119,15 +120,9 @@ export class AppComponent implements OnInit, OnDestroy {
           cursor: 'pointer',
           point: {
             events: {
-              mouseOver() {
-                self.onPointHover(this);
-              },
               click(event) {
                 event.stopPropagation();
                 self.onPointClick(this);
-              },
-              mouseOut() {
-                self.clearSelection();
               }
             }
           }
@@ -135,6 +130,13 @@ export class AppComponent implements OnInit, OnDestroy {
       },
       series: [{
         type: 'scatter',
+        point:{
+          events:{
+            mouseOver() {
+              self.onPointHover(this);
+            }
+          }
+        },
         data: this.points.map(p => [p.x, p.y]),
         marker: {
           radius: 6,
@@ -177,20 +179,22 @@ export class AppComponent implements OnInit, OnDestroy {
     this.fixedTooltipVisible = true;
   }
 
-  clearSelection() {
-    if (!this.fixedTooltipVisible) return;
-    this.selectedPointIndex = null;
-    this.fixedTooltipVisible = false;
+  clearSelection(force = false) {
+    if (force || !this.isMouseOverTooltip) {
+      this.selectedPointIndex = null;
+      this.fixedTooltipVisible = false;
+    }
   }
 
   onTooltipMouseEnter() {
+    this.isMouseOverTooltip = true;
     if (this.tooltipTimeout) {
       clearTimeout(this.tooltipTimeout);
     }
   }
 
   onTooltipMouseLeave() {
-    console.log(this.points);
+    this.isMouseOverTooltip = false;
     this.tooltipTimeout = setTimeout(() => {
       this.clearSelection();
     }, 300);
