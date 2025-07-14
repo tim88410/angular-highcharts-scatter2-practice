@@ -1,0 +1,11 @@
+<div id="container" style="width: 800px; height: 400px;"></div>
+
+<div
+  *ngIf="fixedTooltipVisible && selectedPointIndex !== null"
+  class="fixed-tooltip"
+  [ngStyle]="fixedTooltipStyle"
+  (mouseenter)="onTooltipMouseEnter()"
+  (mouseleave)="onTooltipMouseLeave()"
+>
+  <a href="https://angular.io" target="_blank" rel="noopener noreferrer">Angular 官方網站</a>
+</div>
