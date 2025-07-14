@@ -14,12 +14,74 @@ export class AppComponent implements OnInit, OnDestroy {
   fixedTooltipStyle = { top: '0px', left: '0px' };
   tooltipTimeout: any;
 
-  points = Array.from({ length: 10 }, (_, i) => ({
-    x: Math.floor(Math.random() * 100),
-    y: Math.floor(Math.random() * 100),
-    name: `Point ${i + 1}`,
-    url: 'https://angular.io'
-  }));
+  // points = Array.from({ length: 10 }, (_, i) => ({
+  //   x: Math.floor(Math.random() * 100),
+  //   y: Math.floor(Math.random() * 100),
+  //   name: `Point ${i + 1}`,
+  //   url: 'https://angular.io'
+  // }));
+  points = [
+    {
+        "x": 73,
+        "y": 49,
+        "name": "Point 1",
+        "url": "https://angular.io"
+    },
+    {
+        "x": 63,
+        "y": 55,
+        "name": "Point 2",
+        "url": "https://angular.io"
+    },
+    {
+        "x": 60,
+        "y": 58,
+        "name": "Point 3",
+        "url": "https://angular.io"
+    },
+    {
+        "x": 23,
+        "y": 10,
+        "name": "Point 4",
+        "url": "https://angular.io"
+    },
+    {
+        "x": 41,
+        "y": 47,
+        "name": "Point 5",
+        "url": "https://angular.io"
+    },
+    {
+        "x": 85,
+        "y": 59,
+        "name": "Point 6",
+        "url": "https://angular.io"
+    },
+    {
+        "x": 82,
+        "y": 92,
+        "name": "Point 7",
+        "url": "https://angular.io"
+    },
+    {
+        "x": 24,
+        "y": 65,
+        "name": "Point 8",
+        "url": "https://angular.io"
+    },
+    {
+        "x": 3,
+        "y": 74,
+        "name": "Point 9",
+        "url": "https://angular.io"
+    },
+    {
+        "x": 84,
+        "y": 76,
+        "name": "Point 10",
+        "url": "https://angular.io"
+    }
+]
 
   constructor(private renderer: Renderer2) {}
 
@@ -57,9 +119,15 @@ export class AppComponent implements OnInit, OnDestroy {
           cursor: 'pointer',
           point: {
             events: {
+              mouseOver() {
+                self.onPointHover(this);
+              },
               click(event) {
                 event.stopPropagation();
                 self.onPointClick(this);
+              },
+              mouseOut() {
+                self.clearSelection();
               }
             }
           }
@@ -76,17 +144,36 @@ export class AppComponent implements OnInit, OnDestroy {
     });
   }
 
+  onPointHover(point: any) {
+    const chartPosition = this.chart.container.getBoundingClientRect();
+    const pointPlotX = point.plotX;
+    const pointPlotY = point.plotY;
+
+    const offsetX = 20;
+    const offsetY = 40;
+
+    this.fixedTooltipStyle = {
+      left: `${chartPosition.left + pointPlotX + offsetX}px`,
+      top: `${chartPosition.top + pointPlotY - offsetY}px`
+    };
+    this.fixedTooltipVisible = true;
+    this.selectedPointIndex = point.index;
+  }
+
   onPointClick(point: any) {
     this.selectedPointIndex = point.index;
 
     const chartPosition = this.chart.container.getBoundingClientRect();
     const pointPlotX = point.plotX;
     const pointPlotY = point.plotY;
+    const offsetX = 20;
+    const offsetY = 40;
 
     this.fixedTooltipStyle = {
-      left: `${chartPosition.left + pointPlotX + 10}px`,
-      top: `${chartPosition.top + pointPlotY + 10}px`
+      left: `${chartPosition.left + pointPlotX + offsetX}px`,
+      top: `${chartPosition.top + pointPlotY - offsetY}px`
     };
+
     this.fixedTooltipVisible = true;
   }
 
